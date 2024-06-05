@@ -84,6 +84,13 @@ func main() {
 		c.Next()
 	})
 
+	// default route
+	ginEngine.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, map[string]any{
+			"message": "It works",
+		})
+	})
+
 	// init route
 	httpHandler.NewRouteHandler(ginEngine, uc)
 
