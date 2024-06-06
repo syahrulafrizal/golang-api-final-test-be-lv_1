@@ -60,7 +60,7 @@ func (u *appUsecase) Login(ctx context.Context, options map[string]interface{}) 
 			Issuer:    "member",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(helpers.GetJWTTTL()) * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(helpers.GetJWTTTL()) * time.Minute)),
 		},
 	})
 	if err != nil {
