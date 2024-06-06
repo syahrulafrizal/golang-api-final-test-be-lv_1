@@ -2,14 +2,20 @@ package middleware
 
 import (
 	"app/helpers"
+
+	"github.com/gin-gonic/gin"
 )
 
-type AppMiddleware struct {
+type appMiddleware struct {
 	secret string
 }
 
-func NewMiddleware() *AppMiddleware {
-	return &AppMiddleware{
+func NewMiddleware() Middleware {
+	return &appMiddleware{
 		secret: helpers.GetJWTSecretKey(),
 	}
+}
+
+type Middleware interface {
+	Auth() gin.HandlerFunc
 }

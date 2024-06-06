@@ -8,16 +8,17 @@ import (
 )
 
 type routeHandler struct {
-	Usecase usecase.AppUsecase
-	Route   *gin.Engine
+	Usecase    usecase.AppUsecase
+	Route      *gin.Engine
+	Middleware middleware.Middleware
 }
 
 func NewRouteHandler(ginEngine *gin.Engine, u usecase.AppUsecase) {
-	middle := middleware.NewMiddleware()
 	handler := &routeHandler{
-		Usecase: u,
-		Route:   ginEngine,
+		Usecase:    u,
+		Route:      ginEngine,
+		Middleware: middleware.NewMiddleware(),
 	}
 
-	handler.handleAuthRoute("/auth", middle)
+	handler.handleAuthRoute("/auth")
 }

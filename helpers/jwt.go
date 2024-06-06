@@ -2,12 +2,18 @@ package helpers
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func GetJWTSecretKey() string {
 	return os.Getenv("JWT_SECRET_KEY")
+}
+
+func GetJWTTTL() int {
+	ttl, _ := strconv.Atoi(os.Getenv("JWT_TTL"))
+	return ttl
 }
 
 func GenerateJWTToken(claims jwt.Claims) (string, error) {

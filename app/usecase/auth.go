@@ -9,6 +9,7 @@ import (
 
 	"github.com/Yureka-Teknologi-Cipta/yureka/response"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -55,10 +56,12 @@ func (u *appUsecase) Login(ctx context.Context, options map[string]interface{}) 
 	tokenString, err := helpers.GenerateJWTToken(domain.JWTClaimUser{
 		UserID: user.ID.Hex(),
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ID:        uuid.NewString(),
+			Issuer:    "member",
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(helpers.GetJWTTTL()) * time.Hour)),
 		},
-		// "userID": "bar",
-		// "nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
 	})
 	if err != nil {
 		return response.Error(400, err.Error())

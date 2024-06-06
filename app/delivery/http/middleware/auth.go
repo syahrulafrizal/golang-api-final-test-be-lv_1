@@ -11,7 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func (m *AppMiddleware) Auth() gin.HandlerFunc {
+func (m *appMiddleware) Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		hAuth := c.GetHeader("Authorization")
 		if hAuth == "" {
@@ -37,12 +37,26 @@ func (m *AppMiddleware) Auth() gin.HandlerFunc {
 
 		// check validity token
 		if !token.Valid {
-			msg := err.Error()
 			if errors.Is(err, jwt.ErrTokenSignatureInvalid) {
-				msg = "Unauthorized: Token signature invalid"
+				c.AbortWithStatusJSON(
+					http.StatusBadRequest,
+					response.Error(http.StatusBadRequest, "Unauthorized: Token signature invalid"),
+				)
+				return
 			}
-			response := response.Error(http.StatusBadRequest, msg)
-			c.AbortWithStatusJSON(http.StatusBadRequest, response)
+
+			if errors.Is(err, jwt.ErrTokenExpired) {
+				c.AbortWithStatusJSON(
+					http.StatusBadRequest,
+					response.Error(http.StatusBadRequest, "Unauthorized: Token expired"),
+				)
+				return
+			}
+
+			c.AbortWithStatusJSON(
+				http.StatusBadRequest,
+				response.Error(http.StatusBadRequest, err.Error()),
+			)
 			return
 		}
 

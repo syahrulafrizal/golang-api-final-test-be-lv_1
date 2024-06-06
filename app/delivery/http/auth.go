@@ -1,7 +1,6 @@
 package http
 
 import (
-	"app/app/delivery/http/middleware"
 	"app/domain"
 	"net/http"
 
@@ -9,14 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (handler *routeHandler) handleAuthRoute(prefixPath string, m *middleware.AppMiddleware) {
+func (h *routeHandler) handleAuthRoute(prefixPath string) {
 	// (optional). add prefix api version
-	api := handler.Route.Group(prefixPath)
+	api := h.Route.Group(prefixPath)
 
-	api.POST("/login", handler.Login)
-	api.POST("/register", handler.Register)
+	api.POST("/login", h.Login)
+	api.POST("/register", h.Register)
 
-	api.GET("/me", m.Auth(), handler.GetMe)
+	api.GET("/me", h.Middleware.Auth(), h.GetMe)
 }
 
 func (r *routeHandler) Login(c *gin.Context) {
