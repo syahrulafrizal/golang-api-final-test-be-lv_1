@@ -15,15 +15,15 @@ func (m *appMiddleware) Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		hAuth := c.GetHeader("Authorization")
 		if hAuth == "" {
-			response := response.Error(http.StatusBadRequest, "Unauthorized: Header authorization is required")
-			c.AbortWithStatusJSON(http.StatusBadRequest, response)
+			response := response.Error(http.StatusUnauthorized, "Unauthorized: Header authorization is required")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
 
 		splitToken := strings.Split(hAuth, "Bearer ")
 		if len(splitToken) != 2 {
-			response := response.Error(http.StatusBadRequest, "Unauthorized: Token is invalid")
-			c.AbortWithStatusJSON(http.StatusBadRequest, response)
+			response := response.Error(http.StatusUnauthorized, "Unauthorized: Token is invalid")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
 
@@ -39,37 +39,37 @@ func (m *appMiddleware) Auth() gin.HandlerFunc {
 		if !token.Valid {
 			if errors.Is(err, jwt.ErrTokenSignatureInvalid) {
 				c.AbortWithStatusJSON(
-					http.StatusBadRequest,
-					response.Error(http.StatusBadRequest, "Unauthorized: Token signature invalid"),
+					http.StatusUnauthorized,
+					response.Error(http.StatusUnauthorized, "Unauthorized: Token signature invalid"),
 				)
 				return
 			}
 
 			if errors.Is(err, jwt.ErrTokenExpired) {
 				c.AbortWithStatusJSON(
-					http.StatusBadRequest,
-					response.Error(http.StatusBadRequest, "Unauthorized: Token expired"),
+					http.StatusUnauthorized,
+					response.Error(http.StatusUnauthorized, "Unauthorized: Token expired"),
 				)
 				return
 			}
 
 			c.AbortWithStatusJSON(
-				http.StatusBadRequest,
-				response.Error(http.StatusBadRequest, err.Error()),
+				http.StatusUnauthorized,
+				response.Error(http.StatusUnauthorized, err.Error()),
 			)
 			return
 		}
 
 		claims, tokenOK := token.Claims.(*domain.JWTClaimUser)
 		if !tokenOK {
-			response := response.Error(http.StatusBadRequest, "Unauthorized: Token data not valid")
-			c.AbortWithStatusJSON(http.StatusBadRequest, response)
+			response := response.Error(http.StatusUnauthorized, "Unauthorized: Token data not valid")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
 
 		if !token.Valid {
-			response := response.Error(http.StatusBadRequest, err.Error())
-			c.AbortWithStatusJSON(http.StatusBadRequest, response)
+			response := response.Error(http.StatusUnauthorized, err.Error())
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
 
