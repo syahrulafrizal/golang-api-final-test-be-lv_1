@@ -64,7 +64,7 @@ func main() {
 	gin.DefaultWriter = logrus.StandardLogger().Writer()
 
 	// init mongo database
-	mongo := mongodb.Connect(timeoutContext, os.Getenv("MONGO_URI"), "")
+	mongo := mongodb.Connect(timeoutContext, os.Getenv("MONGO_URL"), "")
 
 	// init repo
 	mongorepo := mongorepo.NewMongodbRepo(mongo)
