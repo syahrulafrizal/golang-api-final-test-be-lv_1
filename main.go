@@ -2,6 +2,7 @@ package main
 
 import (
 	httpHandler "app/app/delivery/http"
+	"app/app/delivery/http/middleware"
 	mongorepo "app/app/repository/mongo"
 	"app/app/usecase"
 	"io"
@@ -11,9 +12,11 @@ import (
 	"time"
 
 	"github.com/Yureka-Teknologi-Cipta/yureka/response"
-	"github.com/Yureka-Teknologi-Cipta/yureka/services/mongodb"
+	yureka_mongodb "github.com/Yureka-Teknologi-Cipta/yureka/services/mongodb"
+	yureka_redis "github.com/Yureka-Teknologi-Cipta/yureka/services/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -64,7 +67,13 @@ func main() {
 	gin.DefaultWriter = logrus.StandardLogger().Writer()
 
 	// init mongo database
-	mongo := mongodb.Connect(timeoutContext, os.Getenv("MONGO_URL"), "")
+	mongo := yureka_mongodb.Connect(timeoutContext, os.Getenv("MONGO_URL"), "")
+
+	// init redis database
+	var redisClient *redis.Client
+	if useRedis, err := strconv.ParseBool(os.Getenv("USE_REDIS")); err == nil && useRedis {
+		redisClient = yureka_redis.Connect(timeoutContext, os.Getenv("REDIS_URL"))
+	}
 
 	// init repo
 	mongorepo := mongorepo.NewMongodbRepo(mongo)
@@ -72,8 +81,12 @@ func main() {
 	// init usecase
 	uc := usecase.NewAppUsecase(mongorepo, timeoutContext)
 
+	// init middleware
+	mdl := middleware.NewMiddleware(redisClient)
+
 	// init gin
 	ginEngine := gin.New()
+
 	ginEngine.Use(func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
@@ -92,7 +105,7 @@ func main() {
 	})
 
 	// init route
-	httpHandler.NewRouteHandler(ginEngine, uc)
+	httpHandler.NewRouteHandler(ginEngine, mdl, uc)
 
 	port := os.Getenv("PORT")
 

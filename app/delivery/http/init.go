@@ -13,11 +13,11 @@ type routeHandler struct {
 	Middleware middleware.Middleware
 }
 
-func NewRouteHandler(ginEngine *gin.Engine, u usecase.AppUsecase) {
+func NewRouteHandler(ginEngine *gin.Engine, middleware middleware.Middleware, u usecase.AppUsecase) {
 	handler := &routeHandler{
 		Usecase:    u,
 		Route:      ginEngine,
-		Middleware: middleware.NewMiddleware(),
+		Middleware: middleware,
 	}
 
 	handler.handleAuthRoute("/auth")
