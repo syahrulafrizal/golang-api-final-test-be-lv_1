@@ -45,7 +45,6 @@ func NewMiddleware(redis *redis.Client) Middleware {
 				"Accept-Encoding",
 				"Accept-Language",
 				"Cookie",
-				"Authorization",
 			},
 		},
 	}
