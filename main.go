@@ -14,6 +14,7 @@ import (
 	"github.com/Yureka-Teknologi-Cipta/yureka/response"
 	yureka_mongodb "github.com/Yureka-Teknologi-Cipta/yureka/services/mongodb"
 	yureka_redis "github.com/Yureka-Teknologi-Cipta/yureka/services/redis"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
@@ -96,6 +97,16 @@ func main() {
 		}()
 		c.Next()
 	})
+
+	// cors
+	ginEngine.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// default route
 	ginEngine.GET("/", func(ctx *gin.Context) {
