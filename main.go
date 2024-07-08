@@ -85,7 +85,7 @@ func main() {
 	mdl := middleware.NewMiddleware(redisClient)
 
 	// init gin
-	ginEngine := gin.Default()
+	ginEngine := gin.New()
 
 	// add exception handler
 	ginEngine.Use(mdl.Recovery())
