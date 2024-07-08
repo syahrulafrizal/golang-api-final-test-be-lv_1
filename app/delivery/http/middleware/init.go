@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"app/helpers"
+	"io"
 	"os"
 	"strconv"
 	"time"
@@ -52,5 +53,7 @@ func NewMiddleware(redis *redis.Client) Middleware {
 
 type Middleware interface {
 	Auth() gin.HandlerFunc
+	Logger(writer io.Writer) gin.HandlerFunc
+	Recovery() gin.HandlerFunc
 	Cache(expiry ...time.Duration) gin.HandlerFunc
 }

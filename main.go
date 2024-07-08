@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Yureka-Teknologi-Cipta/yureka/response"
 	yureka_mongodb "github.com/Yureka-Teknologi-Cipta/yureka/services/mongodb"
 	yureka_redis "github.com/Yureka-Teknologi-Cipta/yureka/services/redis"
 	"github.com/gin-contrib/cors"
@@ -86,17 +85,13 @@ func main() {
 	mdl := middleware.NewMiddleware(redisClient)
 
 	// init gin
-	ginEngine := gin.New()
+	ginEngine := gin.Default()
 
-	ginEngine.Use(func(c *gin.Context) {
-		defer func() {
-			if err := recover(); err != nil {
-				logrus.Error("Panic Recover : ", err)
-				c.AbortWithStatusJSON(http.StatusInternalServerError, response.Error(http.StatusInternalServerError, "Something went wrong"))
-			}
-		}()
-		c.Next()
-	})
+	// add exception handler
+	ginEngine.Use(mdl.Recovery())
+
+	// add logger
+	ginEngine.Use(mdl.Logger(io.MultiWriter(writers...)))
 
 	// cors
 	ginEngine.Use(cors.New(cors.Config{
