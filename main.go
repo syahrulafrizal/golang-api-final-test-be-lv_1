@@ -111,7 +111,7 @@ func main() {
 	})
 
 	// init route
-	httpHandler.NewRouteHandler(ginEngine, mdl, uc)
+	httpHandler.NewRouteHandler(ginEngine.Group(""), mdl, uc)
 
 	port := os.Getenv("PORT")
 
