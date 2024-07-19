@@ -1,4 +1,4 @@
-package usecase
+package usecase_member
 
 import (
 	"app/domain"

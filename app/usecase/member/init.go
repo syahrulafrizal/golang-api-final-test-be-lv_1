@@ -1,4 +1,4 @@
-package usecase
+package usecase_member
 
 import (
 	mongorepo "app/app/repository/mongo"
@@ -13,9 +13,13 @@ type appUsecase struct {
 	contextTimeout time.Duration
 }
 
-func NewAppUsecase(r mongorepo.MongoDBRepo, timeout time.Duration) AppUsecase {
+type RepoInjection struct {
+	MongoDBRepo mongorepo.MongoDBRepo
+}
+
+func NewAppUsecase(r RepoInjection, timeout time.Duration) AppUsecase {
 	return &appUsecase{
-		mongodbRepo:    r,
+		mongodbRepo:    r.MongoDBRepo,
 		contextTimeout: timeout,
 	}
 }

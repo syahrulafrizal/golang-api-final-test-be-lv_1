@@ -1,10 +1,10 @@
 package main
 
 import (
-	httpHandler "app/app/delivery/http"
+	http_member "app/app/delivery/http/member"
 	"app/app/delivery/http/middleware"
 	mongorepo "app/app/repository/mongo"
-	"app/app/usecase"
+	usecase_member "app/app/usecase/member"
 	"io"
 	"net/http"
 	"os"
@@ -79,10 +79,17 @@ func main() {
 	mongorepo := mongorepo.NewMongodbRepo(mongo)
 
 	// init usecase
-	uc := usecase.NewAppUsecase(mongorepo, timeoutContext)
+	ucMember := usecase_member.NewAppUsecase(usecase_member.RepoInjection{
+		MongoDBRepo: mongorepo,
+	}, timeoutContext)
 
 	// init middleware
 	mdl := middleware.NewMiddleware(redisClient)
+
+	// gin mode realease when go env is production
+	if os.Getenv("GO_ENV") == "production" || os.Getenv("GO_ENV") == "prod" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	// init gin
 	ginEngine := gin.New()
@@ -111,7 +118,7 @@ func main() {
 	})
 
 	// init route
-	httpHandler.NewRouteHandler(ginEngine.Group(""), mdl, uc)
+	http_member.NewRouteHandler(ginEngine.Group(""), mdl, ucMember)
 
 	port := os.Getenv("PORT")
 
