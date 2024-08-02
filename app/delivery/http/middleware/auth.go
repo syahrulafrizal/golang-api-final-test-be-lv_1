@@ -36,7 +36,15 @@ func (m *appMiddleware) Auth() gin.HandlerFunc {
 		})
 
 		// check validity token
-		if !token.Valid {
+		if token == nil || !token.Valid {
+			if errors.Is(err, jwt.ErrTokenMalformed) {
+				c.AbortWithStatusJSON(
+					http.StatusUnauthorized,
+					response.Error(http.StatusUnauthorized, "Unauthorized: Token is invalid"),
+				)
+				return
+			}
+
 			if errors.Is(err, jwt.ErrTokenSignatureInvalid) {
 				c.AbortWithStatusJSON(
 					http.StatusUnauthorized,
