@@ -75,12 +75,6 @@ func (m *appMiddleware) Auth() gin.HandlerFunc {
 			return
 		}
 
-		if !token.Valid {
-			response := response.Error(http.StatusUnauthorized, err.Error())
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
 		c.Set("token_data", *claims)
 		c.Next()
 	}
