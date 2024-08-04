@@ -54,6 +54,7 @@ func NewMiddleware(redis *redis.Client) Middleware {
 
 type Middleware interface {
 	Auth() gin.HandlerFunc
+	Cors() gin.HandlerFunc
 	Logger(writer io.Writer) gin.HandlerFunc
 	Recovery() gin.HandlerFunc
 	Cache(expiry ...time.Duration) gin.HandlerFunc
