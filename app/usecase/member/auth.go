@@ -14,12 +14,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (u *appUsecase) Login(ctx context.Context, options map[string]interface{}) response.Base {
+func (u *appUsecase) Login(ctx context.Context, payload domain.LoginRequest) response.Base {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
-
-	// payload
-	payload := options["payload"].(domain.LoginRequest)
 
 	errValidation := make(map[string]string)
 	// validating request
@@ -73,12 +70,9 @@ func (u *appUsecase) Login(ctx context.Context, options map[string]interface{}) 
 	})
 }
 
-func (u *appUsecase) Register(ctx context.Context, options map[string]interface{}) response.Base {
+func (u *appUsecase) Register(ctx context.Context, payload domain.RegisterRequest) response.Base {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
-
-	// payload
-	payload := options["payload"].(domain.RegisterRequest)
 
 	errValidation := make(map[string]string)
 	// validating request
@@ -129,12 +123,9 @@ func (u *appUsecase) Register(ctx context.Context, options map[string]interface{
 	return response.Success(newUser)
 }
 
-func (u *appUsecase) GetMe(ctx context.Context, options map[string]interface{}) response.Base {
+func (u *appUsecase) GetMe(ctx context.Context, claim domain.JWTClaimUser) response.Base {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
-
-	// get claim
-	claim := options["claim"].(domain.JWTClaimUser)
 
 	userID := claim.UserID
 

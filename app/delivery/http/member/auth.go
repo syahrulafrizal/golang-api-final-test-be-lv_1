@@ -28,12 +28,7 @@ func (r *routeHandler) Login(c *gin.Context) {
 		return
 	}
 
-	options := map[string]interface{}{
-		"payload": payload,
-		"query":   c.Request.URL.Query(),
-	}
-
-	response := r.Usecase.Login(ctx, options)
+	response := r.Usecase.Login(ctx, payload)
 	c.JSON(response.Status, response)
 }
 
@@ -47,25 +42,13 @@ func (r *routeHandler) Register(c *gin.Context) {
 		return
 	}
 
-	options := map[string]interface{}{
-		"payload": payload,
-		"query":   c.Request.URL.Query(),
-	}
-
-	response := r.Usecase.Register(ctx, options)
+	response := r.Usecase.Register(ctx, payload)
 	c.JSON(response.Status, response)
 }
 
 func (r *routeHandler) GetMe(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	tokenData := c.MustGet("token_data")
-
-	options := map[string]interface{}{
-		"claim": tokenData.(domain.JWTClaimUser),
-		"query": c.Request.URL.Query(),
-	}
-
-	response := r.Usecase.GetMe(ctx, options)
+	response := r.Usecase.GetMe(ctx, c.MustGet("token_data").(domain.JWTClaimUser))
 	c.JSON(response.Status, response)
 }

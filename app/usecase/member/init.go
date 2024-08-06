@@ -2,6 +2,7 @@ package usecase_member
 
 import (
 	mongorepo "app/app/repository/mongo"
+	"app/domain"
 	"context"
 	"time"
 
@@ -25,7 +26,7 @@ func NewAppUsecase(r RepoInjection, timeout time.Duration) AppUsecase {
 }
 
 type AppUsecase interface {
-	Login(ctx context.Context, options map[string]interface{}) response.Base
-	Register(ctx context.Context, options map[string]interface{}) response.Base
-	GetMe(ctx context.Context, options map[string]interface{}) response.Base
+	Login(ctx context.Context, payload domain.LoginRequest) response.Base
+	Register(ctx context.Context, payload domain.RegisterRequest) response.Base
+	GetMe(ctx context.Context, claim domain.JWTClaimUser) response.Base
 }
