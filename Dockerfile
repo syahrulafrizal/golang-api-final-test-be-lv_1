@@ -1,5 +1,5 @@
 # builder
-FROM golang:1.22-alpine as builder
+FROM golang:1.22-alpine AS builder
 
 # change workdir
 WORKDIR /home
