@@ -11,7 +11,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/sirupsen/logrus v1.9.3
-	go.mongodb.org/mongo-driver v1.16.0
+	go.mongodb.org/mongo-driver v1.16.1
 	golang.org/x/crypto v0.25.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
