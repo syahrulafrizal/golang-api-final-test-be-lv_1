@@ -2,18 +2,18 @@ package http_member
 
 import (
 	"app/app/delivery/http/middleware"
-	usecase_member "app/app/usecase/member"
+	"app/domain"
 
 	"github.com/gin-gonic/gin"
 )
 
 type routeHandler struct {
-	Usecase    usecase_member.AppUsecase
+	Usecase    domain.MemberAppUsecase
 	Route      *gin.RouterGroup
 	Middleware middleware.Middleware
 }
 
-func NewRouteHandler(route *gin.RouterGroup, middleware middleware.Middleware, u usecase_member.AppUsecase) {
+func NewRouteHandler(route *gin.RouterGroup, middleware middleware.Middleware, u domain.MemberAppUsecase) {
 	handler := &routeHandler{
 		Usecase:    u,
 		Route:      route,

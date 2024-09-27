@@ -1,25 +1,19 @@
 package mongorepo
 
 import (
-	"app/domain/model"
-	"context"
+	"app/domain"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type mongoDBRepo struct {
-	Conn           *mongo.Database
-	UserCollection string
+	conn           *mongo.Database
+	userCollection string
 }
 
-func NewMongodbRepo(Conn *mongo.Database) MongoDBRepo {
+func NewMongodbRepo(Conn *mongo.Database) domain.MongoDBRepo {
 	return &mongoDBRepo{
-		Conn:           Conn,
-		UserCollection: "users",
+		conn:           Conn,
+		userCollection: "users",
 	}
-}
-
-type MongoDBRepo interface {
-	FetchOneUser(ctx context.Context, options map[string]interface{}) (*model.User, error)
-	CreateUser(ctx context.Context, usermodel *model.User) (err error)
 }

@@ -1,7 +1,7 @@
 package redisrepo
 
 import (
-	"context"
+	"app/domain"
 	"os"
 	"strconv"
 	"time"
@@ -16,7 +16,7 @@ type redisRepo struct {
 	DefaultTTL time.Duration
 }
 
-func NewRedisRepo(Conn *redis.Client) RedisRepo {
+func NewRedisRepo(Conn *redis.Client) domain.CacheRepo {
 	ttl, _ := time.ParseDuration(os.Getenv("REDIS_TTL"))
 	// default ttl redis
 	if ttl == 0 {
@@ -32,11 +32,4 @@ func NewRedisRepo(Conn *redis.Client) RedisRepo {
 		UseRedis:   useRedis,
 		DefaultTTL: ttl,
 	}
-}
-
-type RedisRepo interface {
-	Enabled() bool
-	GetTTL() time.Duration
-	Get(ctx context.Context, key string) (value []byte, err error)
-	Set(ctx context.Context, key string, value []byte, expiration *time.Duration) (err error)
 }

@@ -1,12 +1,10 @@
 package s3repo
 
 import (
-	s3_model "app/domain/model/s3"
+	"app/domain"
 	"context"
-	"io"
 	"net/url"
 	"os"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -22,7 +20,7 @@ type s3Repo struct {
 	presigner  *s3.PresignClient
 }
 
-func NewS3Repo() S3Repo {
+func NewS3Repo() domain.StorageRepo {
 	cfg, _ := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithCredentialsProvider(
@@ -53,11 +51,4 @@ func NewS3Repo() S3Repo {
 		client:     client,
 		presigner:  s3.NewPresignClient(client),
 	}
-}
-
-type S3Repo interface {
-	GetPresignedLink(objectKey string, expires *time.Duration) string
-	GetPublicLink(objectKey string) string
-	UploadFilePublic(objectKey string, body io.Reader, contentType string) (uploadData *s3_model.UploadResponse, err error)
-	UploadFilePrivate(objectKey string, body io.Reader, contentType string, expires *time.Duration) (uploadData *s3_model.UploadResponse, err error)
 }

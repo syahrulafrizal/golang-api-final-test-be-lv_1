@@ -8,12 +8,8 @@ import (
 	moptions "go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func CommonFilter(options map[string]any) map[string]any {
-	query := map[string]any{
-		"deleted_at": bson.M{
-			"$eq": nil,
-		},
-	}
+func CommonFilter(options, defaultQuery map[string]any) map[string]any {
+	query := defaultQuery
 
 	if id, ok := options["id"].(primitive.ObjectID); ok {
 		query["_id"] = id
@@ -35,6 +31,13 @@ func CommonFilter(options map[string]any) map[string]any {
 		}
 		query["_id"] = bson.M{
 			"$in": objIDs,
+		}
+	}
+
+	// raw query
+	if raw, ok := options["raw"].(map[string]any); ok {
+		for key, v := range raw {
+			query[key] = v
 		}
 	}
 

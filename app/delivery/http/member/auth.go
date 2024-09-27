@@ -2,6 +2,7 @@ package http_member
 
 import (
 	"app/domain"
+	request_model "app/domain/model/request"
 	"net/http"
 
 	"github.com/Yureka-Teknologi-Cipta/yureka/response"
@@ -21,7 +22,7 @@ func (h *routeHandler) handleAuthRoute(prefixPath string) {
 func (r *routeHandler) Login(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	payload := domain.LoginRequest{}
+	payload := request_model.LoginRequest{}
 	err := c.ShouldBindJSON(&payload)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response.Error(http.StatusBadRequest, "invalid json data"))
@@ -35,7 +36,7 @@ func (r *routeHandler) Login(c *gin.Context) {
 func (r *routeHandler) Register(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	payload := domain.RegisterRequest{}
+	payload := request_model.RegisterRequest{}
 	err := c.ShouldBindJSON(&payload)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response.Error(http.StatusBadRequest, "invalid json data"))

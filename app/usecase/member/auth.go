@@ -2,19 +2,18 @@ package usecase_member
 
 import (
 	"app/domain"
-	"app/domain/model"
-	"app/helpers"
+	mongo_model "app/domain/model/mongo"
+	request_model "app/domain/model/request"
+	jwt_helper "app/helpers/jsonwebtoken"
 	"context"
 	"time"
 
 	"github.com/Yureka-Teknologi-Cipta/yureka/response"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (u *appUsecase) Login(ctx context.Context, payload domain.LoginRequest) response.Base {
+func (u *appUsecase) Login(ctx context.Context, payload request_model.LoginRequest) response.Base {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
 
@@ -50,16 +49,12 @@ func (u *appUsecase) Login(ctx context.Context, payload domain.LoginRequest) res
 	}
 
 	// generate token
-	tokenString, err := helpers.GenerateJWTToken(domain.JWTClaimUser{
-		UserID: user.ID.Hex(),
-		RegisteredClaims: jwt.RegisteredClaims{
-			ID:        uuid.NewString(),
-			Issuer:    "member",
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			NotBefore: jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(helpers.GetJWTTTL()) * time.Minute)),
+	tokenString, err := jwt_helper.GenerateJWTToken(
+		jwt_helper.GetJwtCredential().Member,
+		domain.JWTClaimUser{
+			UserID: user.ID.Hex(),
 		},
-	})
+	)
 	if err != nil {
 		return response.Error(400, err.Error())
 	}
@@ -70,7 +65,7 @@ func (u *appUsecase) Login(ctx context.Context, payload domain.LoginRequest) res
 	})
 }
 
-func (u *appUsecase) Register(ctx context.Context, payload domain.RegisterRequest) response.Base {
+func (u *appUsecase) Register(ctx context.Context, payload request_model.RegisterRequest) response.Base {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
 
@@ -106,7 +101,7 @@ func (u *appUsecase) Register(ctx context.Context, payload domain.RegisterReques
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
 
-	newUser := model.User{
+	newUser := mongo_model.User{
 		ID:        primitive.NewObjectID(),
 		Name:      payload.Name,
 		Username:  payload.Username,

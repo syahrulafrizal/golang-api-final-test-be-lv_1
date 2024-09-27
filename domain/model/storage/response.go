@@ -1,4 +1,4 @@
-package s3_model
+package storage_model
 
 type UploadResponse struct {
 	Key         string `json:"key"`

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"app/helpers"
+	jwt_helper "app/helpers/jsonwebtoken"
 	"io"
 	"os"
 	"strconv"
@@ -35,7 +35,7 @@ func NewMiddleware(redis *redis.Client) Middleware {
 	redisKeyPrefix := os.Getenv("REDIS_KEY_PREFIX")
 
 	return &appMiddleware{
-		secret: helpers.GetJWTSecretKey(),
+		secret: jwt_helper.GetJwtCredential().Member.Secret,
 		cache: CacheConfig{
 			enabled:     useRedis,
 			store:       redis,
