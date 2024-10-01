@@ -2,39 +2,40 @@ package mongorepo
 
 import (
 	mongo_model "app/domain/model/mongo"
-	"app/helpers"
 	"context"
 
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	moptions "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // for default query
-var DEFAULT_QUERY_USER = map[string]any{
-	"deletedAt": map[string]any{
-		"$eq": nil,
-	},
+func defaultUserQuery() map[string]any {
+	return map[string]any{
+		"deletedAt": map[string]any{
+			"$eq": nil,
+		},
+	}
 }
 
-func generateQueryFilterUser(options map[string]interface{}, withOptions bool) (query bson.M, mongoOptions *moptions.FindOptions) {
-	// common filter and find options
-	query = helpers.CommonFilter(options, DEFAULT_QUERY_USER)
-	if withOptions {
-		mongoOptions = helpers.CommonMongoFindOptions(options)
+func (r *mongoDBRepo) FetchUser(ctx context.Context, options mongo_model.UserFilter) (cur *mongo.Cursor, err error) {
+	// generate query
+	query := options.Query(defaultUserQuery())
+
+	// query options
+	findOptions := options.FindOptions()
+
+	cur, err = r.conn.Collection(r.userCollection).Find(ctx, query, findOptions)
+	if err != nil {
+		logrus.Error("FetchUser Find:", err)
+		return
 	}
 
-	// your own filter
-	if username, ok := options["username"].(string); ok {
-		query["username"] = username
-	}
-
-	return query, mongoOptions
+	return
 }
 
-func (r *mongoDBRepo) FetchOneUser(ctx context.Context, options map[string]interface{}) (row *mongo_model.User, err error) {
-	query, _ := generateQueryFilterUser(options, false)
+func (r *mongoDBRepo) FetchOneUser(ctx context.Context, options mongo_model.UserFilter) (row *mongo_model.User, err error) {
+	// generate query
+	query := options.Query(defaultUserQuery())
 
 	err = r.conn.Collection(r.userCollection).FindOne(ctx, query).Decode(&row)
 	if err != nil {
@@ -45,6 +46,19 @@ func (r *mongoDBRepo) FetchOneUser(ctx context.Context, options map[string]inter
 
 		logrus.Error("FetchOneUser FindOne:", err)
 		return
+	}
+
+	return
+}
+
+func (r *mongoDBRepo) CountUser(ctx context.Context, options mongo_model.UserFilter) (total int64) {
+	// generate query
+	query := options.Query(defaultUserQuery())
+
+	total, err := r.conn.Collection(r.userCollection).CountDocuments(ctx, query)
+	if err != nil {
+		logrus.Error("CountUser", err)
+		return 0
 	}
 
 	return

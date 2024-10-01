@@ -15,3 +15,21 @@ type User struct {
 	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt"`
 	DeletedAt *time.Time         `bson:"deletedAt" json:"-"`
 }
+
+var UserAllowedSort = []string{"name", "username", "createdAt", "updatedAt"}
+
+type UserFilter struct {
+	DefaultFilter
+	Username *string
+}
+
+func (f *UserFilter) Query(defaultQuery map[string]any) map[string]any {
+	// default query
+	f.DefaultFilter.DefaultQuery(defaultQuery)
+
+	if f.Username != nil {
+		defaultQuery["username"] = f.Username
+	}
+
+	return defaultQuery
+}

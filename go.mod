@@ -3,7 +3,7 @@ module app
 go 1.22
 
 require (
-	github.com/Yureka-Teknologi-Cipta/yureka v1.3.1
+	github.com/Yureka-Teknologi-Cipta/yureka v1.4.0
 	github.com/aws/aws-sdk-go-v2 v1.31.0
 	github.com/aws/aws-sdk-go-v2/config v1.27.37
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.35

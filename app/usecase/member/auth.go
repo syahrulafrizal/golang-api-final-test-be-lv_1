@@ -32,8 +32,8 @@ func (u *appUsecase) Login(ctx context.Context, payload request_model.LoginReque
 	}
 
 	// check the db
-	user, err := u.mongodbRepo.FetchOneUser(ctx, map[string]interface{}{
-		"username": payload.Username,
+	user, err := u.mongodbRepo.FetchOneUser(ctx, mongo_model.UserFilter{
+		Username: &payload.Username,
 	})
 	if err != nil {
 		return response.Error(500, err.Error())
@@ -88,8 +88,8 @@ func (u *appUsecase) Register(ctx context.Context, payload request_model.Registe
 	}
 
 	// check the db
-	user, err := u.mongodbRepo.FetchOneUser(ctx, map[string]interface{}{
-		"username": payload.Username,
+	user, err := u.mongodbRepo.FetchOneUser(ctx, mongo_model.UserFilter{
+		Username: &payload.Username,
 	})
 	if err != nil {
 		return response.Error(500, err.Error())
@@ -125,8 +125,10 @@ func (u *appUsecase) GetMe(ctx context.Context, claim domain.JWTClaimUser) respo
 	userID := claim.UserID
 
 	// check the db
-	user, err := u.mongodbRepo.FetchOneUser(ctx, map[string]interface{}{
-		"id": userID,
+	user, err := u.mongodbRepo.FetchOneUser(ctx, mongo_model.UserFilter{
+		DefaultFilter: mongo_model.DefaultFilter{
+			IDStr: &userID,
+		},
 	})
 	if err != nil {
 		return response.Error(500, err.Error())

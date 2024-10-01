@@ -6,10 +6,14 @@ import (
 	"context"
 	"io"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MongoDBRepo interface {
-	FetchOneUser(ctx context.Context, options map[string]interface{}) (*mongo_model.User, error)
+	FetchUser(ctx context.Context, options mongo_model.UserFilter) (*mongo.Cursor, error)
+	FetchOneUser(ctx context.Context, options mongo_model.UserFilter) (*mongo_model.User, error)
+	CountUser(ctx context.Context, options mongo_model.UserFilter) int64
 	CreateUser(ctx context.Context, model *mongo_model.User) (err error)
 }
 

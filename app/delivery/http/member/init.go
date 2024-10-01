@@ -21,4 +21,5 @@ func NewRouteHandler(route *gin.RouterGroup, middleware middleware.Middleware, u
 	}
 
 	handler.handleAuthRoute("/auth")
+	handler.handleSampleRoute("/sample")
 }
