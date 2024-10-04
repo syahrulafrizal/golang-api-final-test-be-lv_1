@@ -15,5 +15,5 @@ type MemberAppUsecase interface {
 
 	SampleUserList(ctx context.Context, claim JWTClaimUser, query url.Values) response.Base
 	SampleUserDetail(ctx context.Context, claim JWTClaimUser, id string) response.Base
-	// SampleUserExport(ctx context.Context, claim JWTClaimUser, query url.Values) response.Base
+	SampleUserExport(ctx context.Context, claim JWTClaimUser, query url.Values) response.Base
 }

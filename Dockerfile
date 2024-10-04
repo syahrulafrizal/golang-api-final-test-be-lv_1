@@ -1,5 +1,5 @@
 # builder
-FROM golang:1.22-alpine AS builder
+FROM golang:1.23 AS builder
 
 # change workdir
 WORKDIR /home
@@ -16,8 +16,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflag
 # final image
 FROM alpine
 
-# copy the binary from the builder image
+## Copy the pre-built binary file from the previous stage
 COPY --from=builder /home/build-app .
+COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /
 
-# run the binary
+ENV ZONEINFO=/zoneinfo.zip
+
+EXPOSE 5050
+
 ENTRYPOINT ./build-app

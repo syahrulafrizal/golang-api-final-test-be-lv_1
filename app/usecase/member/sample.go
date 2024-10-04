@@ -10,6 +10,8 @@ import (
 
 	"github.com/Yureka-Teknologi-Cipta/yureka/helpers"
 	"github.com/Yureka-Teknologi-Cipta/yureka/response"
+	exporter "github.com/faytranevozter/simple-exporter"
+	"github.com/faytranevozter/simple-exporter/config"
 	"github.com/sirupsen/logrus"
 )
 
@@ -118,4 +120,80 @@ func (u *appUsecase) SampleUserDetail(ctx context.Context, claim domain.JWTClaim
 	}
 
 	return response.Success(user)
+}
+
+func (u *appUsecase) SampleUserExport(ctx context.Context, claim domain.JWTClaimUser, urlQuery url.Values) response.Base {
+	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
+	defer cancel()
+
+	options := mongo_model.UserFilter{}
+
+	// ---------- createdAt filter ----------
+	var start, end time.Time
+	if t, e := time.Parse("2006-01-02 15:04:05", urlQuery.Get("created_at_start")); e == nil {
+		start = t
+	}
+
+	if t, e := time.Parse("2006-01-02 15:04:05", urlQuery.Get("created_at_end")); e == nil {
+		end = t
+	}
+
+	if !start.IsZero() && !end.IsZero() {
+		options.CreatedAtRange = &mongo_model.DatetimeRange{
+			Start: start,
+			End:   end,
+		}
+	} else if !start.IsZero() {
+		options.CreatedAtGte = &start
+	} else if !end.IsZero() {
+		options.CreatedAtLte = &end
+	}
+	// ---------- end createdAt filter ----------
+
+	// sorting here
+	options.Sorts = helpers.GetSorts(urlQuery, mongo_model.UserAllowedSort)
+
+	indo, _ := time.LoadLocation("Asia/Jakarta")
+
+	// init the exporter
+	exp := exporter.NewExporter(
+		config.WithSheetHeader([]config.FieldConfig{
+			{Key: "id", Label: "ID"},
+			{Key: "name", Label: "Name"},
+			{Key: "username", Label: "Username"},
+			{Key: "createdAt", Label: "Register At", As: "date", DateFormatLocation: indo},
+		}),
+		config.WithSheetFilter(true),
+		config.WithSheetStyle(true),
+	)
+
+	// check the db
+	cur, err := u.mongodbRepo.FetchUser(ctx, options)
+	if err != nil {
+		return response.Error(500, err.Error())
+	}
+	defer cur.Close(ctx)
+
+	for cur.Next(ctx) {
+		row := mongo_model.User{}
+		err := cur.Decode(&row)
+		if err != nil {
+			logrus.Error("User Decode ", err)
+			return response.Error(500, err.Error())
+		}
+
+		exp.AddRow(map[string]any{
+			"id":         row.ID.Hex(),
+			"name":       row.Name,
+			"username":   row.Username,
+			"created_at": row.CreatedAt,
+			"updated_at": row.UpdatedAt,
+		})
+	}
+
+	base64, err := exp.ToBase64()
+
+	return response.Success(map[string]any{
+		"base64": base64,
+	})
 }

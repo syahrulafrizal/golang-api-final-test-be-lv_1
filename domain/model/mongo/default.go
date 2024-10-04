@@ -26,6 +26,8 @@ type DefaultFilter struct {
 	UpdatedAtLte   *time.Time
 	UpdatedAtRange *DatetimeRange
 
+	Raw map[string]any
+
 	Limit  *int64
 	Offset *int64
 	Sorts  bson.D
@@ -102,6 +104,13 @@ func (f *DefaultFilter) DefaultQuery(query map[string]any) {
 
 	if len(updatedAt) > 0 {
 		query["updatedAt"] = updatedAt
+	}
+
+	// raw data
+	if len(f.Raw) > 0 {
+		for k, v := range f.Raw {
+			query[k] = v
+		}
 	}
 }
 
