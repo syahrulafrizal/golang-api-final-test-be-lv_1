@@ -7,13 +7,13 @@ import (
 )
 
 type mongoDBRepo struct {
-	conn           *mongo.Database
-	userCollection string
+	conn            *mongo.Database
+	adminCollection string
 }
 
 func NewMongodbRepo(Conn *mongo.Database) domain.MongoDBRepo {
 	return &mongoDBRepo{
-		conn:           Conn,
-		userCollection: "users",
+		conn:            Conn,
+		adminCollection: "admins",
 	}
 }
