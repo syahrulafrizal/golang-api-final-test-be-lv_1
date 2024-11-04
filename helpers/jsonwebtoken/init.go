@@ -14,5 +14,5 @@ type JWT struct {
 }
 
 type JWTCredential struct {
-	Member JWT
+	Admin JWT
 }

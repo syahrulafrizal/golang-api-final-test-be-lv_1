@@ -12,11 +12,11 @@ import (
 )
 
 func GetJwtCredential() JWTCredential {
-	ttl, _ := strconv.Atoi(os.Getenv("JWT_MEMBER_TTL"))
+	ttl, _ := strconv.Atoi(os.Getenv("JWT_ADMIN_TTL"))
 
 	return JWTCredential{
-		Member: JWT{
-			Secret: os.Getenv("JWT_MEMBER_SECRET_KEY"),
+		Admin: JWT{
+			Secret: os.Getenv("JWT_ADMIN_SECRET_KEY"),
 			TLL:    time.Duration(ttl) * time.Minute,
 			Algo:   jwt.SigningMethodHS256,
 		},
@@ -27,13 +27,13 @@ func GenerateJWTToken(jwtCred JWT, data jwt.Claims) (string, error) {
 	var newClaims jwt.Claims
 
 	// reassign data
-	if claim, ok := data.(domain.JWTClaimUser); ok {
+	if claim, ok := data.(domain.JWTClaimAdmin); ok {
 		if claim.RegisteredClaims.ID == "" {
 			claim.RegisteredClaims.ID = uuid.NewString()
 		}
 
 		if claim.RegisteredClaims.Issuer == "" {
-			claim.RegisteredClaims.Issuer = "member"
+			claim.RegisteredClaims.Issuer = "admin"
 		}
 
 		if claim.RegisteredClaims.IssuedAt == nil {
