@@ -1,10 +1,10 @@
 package main
 
 import (
-	http_member "app/app/delivery/http/member"
+	http_admin "app/app/delivery/http/admin"
 	"app/app/delivery/http/middleware"
 	mongorepo "app/app/repository/mongo"
-	usecase_member "app/app/usecase/member"
+	usecase_admin "app/app/usecase/admin"
 	"io"
 	"net/http"
 	"os"
@@ -78,7 +78,7 @@ func main() {
 	mongorepo := mongorepo.NewMongodbRepo(mongo)
 
 	// init usecase
-	ucMember := usecase_member.NewAppUsecase(usecase_member.RepoInjection{
+	ucAdmin := usecase_admin.NewAppUsecase(usecase_admin.RepoInjection{
 		MongoDBRepo: mongorepo,
 	}, timeoutContext)
 
@@ -110,7 +110,7 @@ func main() {
 	})
 
 	// init route
-	http_member.NewRouteHandler(ginEngine.Group(""), mdl, ucMember)
+	http_admin.NewRouteHandler(ginEngine.Group(""), mdl, ucAdmin)
 
 	port := os.Getenv("PORT")
 
