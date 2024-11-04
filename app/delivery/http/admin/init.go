@@ -1,4 +1,4 @@
-package http_member
+package http_admin
 
 import (
 	"app/app/delivery/http/middleware"
@@ -8,12 +8,12 @@ import (
 )
 
 type routeHandler struct {
-	Usecase    domain.MemberAppUsecase
+	Usecase    domain.AdminAppUsecase
 	Route      *gin.RouterGroup
 	Middleware middleware.Middleware
 }
 
-func NewRouteHandler(route *gin.RouterGroup, middleware middleware.Middleware, u domain.MemberAppUsecase) {
+func NewRouteHandler(route *gin.RouterGroup, middleware middleware.Middleware, u domain.AdminAppUsecase) {
 	handler := &routeHandler{
 		Usecase:    u,
 		Route:      route,
@@ -21,5 +21,4 @@ func NewRouteHandler(route *gin.RouterGroup, middleware middleware.Middleware, u
 	}
 
 	handler.handleAuthRoute("/auth")
-	handler.handleSampleRoute("/sample")
 }

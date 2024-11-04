@@ -35,14 +35,14 @@ func NewMiddleware(redis *redis.Client) Middleware {
 	redisKeyPrefix := os.Getenv("REDIS_KEY_PREFIX")
 
 	return &appMiddleware{
-		secret: jwt_helper.GetJwtCredential().Member.Secret,
+		secret: jwt_helper.GetJwtCredential().Admin.Secret,
 		cache: CacheConfig{
 			enabled:     useRedis,
 			store:       redis,
 			cachePrefix: redisKeyPrefix + "gin:",
 			storeTTL:    ttl,
 			headerKeys: []string{
-				"User-Agent",
+				"Admin-Agent",
 				"Accept",
 				"Accept-Encoding",
 				"Accept-Language",

@@ -31,7 +31,7 @@ func (m *appMiddleware) Auth() gin.HandlerFunc {
 		tokenString := splitToken[1]
 
 		// validating token
-		token, err := jwt.ParseWithClaims(tokenString, &domain.JWTClaimUser{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(tokenString, &domain.JWTClaimAdmin{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(m.secret), nil
 		})
 
@@ -68,7 +68,7 @@ func (m *appMiddleware) Auth() gin.HandlerFunc {
 			return
 		}
 
-		claims, tokenOK := token.Claims.(*domain.JWTClaimUser)
+		claims, tokenOK := token.Claims.(*domain.JWTClaimAdmin)
 		if !tokenOK {
 			response := response.Error(http.StatusUnauthorized, "Unauthorized: Token data not valid")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)

@@ -11,10 +11,10 @@ import (
 )
 
 type MongoDBRepo interface {
-	FetchUser(ctx context.Context, options mongo_model.UserFilter) (*mongo.Cursor, error)
-	FetchOneUser(ctx context.Context, options mongo_model.UserFilter) (*mongo_model.User, error)
-	CountUser(ctx context.Context, options mongo_model.UserFilter) int64
-	CreateUser(ctx context.Context, model *mongo_model.User) (err error)
+	FetchAdmin(ctx context.Context, options mongo_model.AdminFilter) (*mongo.Cursor, error)
+	FetchOneAdmin(ctx context.Context, options mongo_model.AdminFilter) (*mongo_model.Admin, error)
+	CountAdmin(ctx context.Context, options mongo_model.AdminFilter) int64
+	CreateAdmin(ctx context.Context, model *mongo_model.Admin) (err error)
 }
 
 type CacheRepo interface {

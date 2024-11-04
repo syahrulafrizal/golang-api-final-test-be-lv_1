@@ -1,4 +1,4 @@
-package usecase_member
+package usecase_admin
 
 import (
 	"app/domain"
@@ -14,7 +14,7 @@ type RepoInjection struct {
 	MongoDBRepo domain.MongoDBRepo
 }
 
-func NewAppUsecase(r RepoInjection, timeout time.Duration) domain.MemberAppUsecase {
+func NewAppUsecase(r RepoInjection, timeout time.Duration) domain.AdminAppUsecase {
 	return &appUsecase{
 		mongodbRepo:    r.MongoDBRepo,
 		contextTimeout: timeout,
