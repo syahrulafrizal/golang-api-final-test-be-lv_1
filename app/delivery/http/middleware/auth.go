@@ -35,8 +35,13 @@ func (m *appMiddleware) Auth() gin.HandlerFunc {
 			return []byte(m.secret), nil
 		})
 
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response.Error(http.StatusUnauthorized, err.Error()))
+			return
+		}
+
 		// check validity token
-		if token == nil || !token.Valid {
+		if !token.Valid {
 			if errors.Is(err, jwt.ErrTokenMalformed) {
 				c.AbortWithStatusJSON(
 					http.StatusUnauthorized,
@@ -60,11 +65,6 @@ func (m *appMiddleware) Auth() gin.HandlerFunc {
 				)
 				return
 			}
-
-			c.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				response.Error(http.StatusUnauthorized, err.Error()),
-			)
 			return
 		}
 

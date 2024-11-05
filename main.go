@@ -99,7 +99,7 @@ func main() {
 	ginEngine := gin.New()
 
 	// add exception handler
-	ginEngine.Use(mdl.Recovery())
+	// ginEngine.Use(mdl.Recovery())
 
 	// add logger
 	ginEngine.Use(mdl.Logger(io.MultiWriter(writers...)))
@@ -113,10 +113,12 @@ func main() {
 			"message": "It works",
 		})
 	})
+	// Serve static files from the /media directory
+	ginEngine.Static("/media", "./media")
 
 	// init route
-	http_admin.NewRouteHandler(ginEngine.Group(""), mdl, ucAdmin)
-	http_public.NewRouteHandler(ginEngine.Group(""), mdl, ucPublic)
+	http_admin.NewRouteHandler(ginEngine.Group("admin"), mdl, ucAdmin)
+	http_public.NewRouteHandler(ginEngine.Group("public"), mdl, ucPublic)
 
 	port := os.Getenv("PORT")
 

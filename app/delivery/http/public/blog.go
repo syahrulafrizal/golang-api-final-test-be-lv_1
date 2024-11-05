@@ -4,16 +4,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *routeHandler) handleFaqRoute(prefixPath string) {
+func (h *routeHandler) handleBlogRoute(prefixPath string) {
 	// (optional). add prefix api version
 	api := h.Route.Group(prefixPath)
 
-	api.GET("/list", h.FaqList)
+	api.GET("/list", h.BlogList)
 }
 
-func (r *routeHandler) FaqList(c *gin.Context) {
+func (r *routeHandler) BlogList(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	response := r.Usecase.FaqList(ctx, c.Request.URL.Query())
+	response := r.Usecase.BlogList(ctx, c.Request.URL.Query())
 	c.JSON(response.Status, response)
 }

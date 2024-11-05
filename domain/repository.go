@@ -20,6 +20,11 @@ type MongoDBRepo interface {
 	FetchOneFaq(ctx context.Context, options mongo_model.FaqFilter) (*mongo_model.Faq, error)
 	CountFaq(ctx context.Context, options mongo_model.FaqFilter) int64
 	CreateFaq(ctx context.Context, model *mongo_model.Faq) (err error)
+
+	FetchBlog(ctx context.Context, options mongo_model.BlogFilter) (*mongo.Cursor, error)
+	FetchOneBlog(ctx context.Context, options mongo_model.BlogFilter) (*mongo_model.Blog, error)
+	CountBlog(ctx context.Context, options mongo_model.BlogFilter) int64
+	CreateBlog(ctx context.Context, model *mongo_model.Blog) (err error)
 }
 
 type CacheRepo interface {
