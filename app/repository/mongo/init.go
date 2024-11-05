@@ -9,11 +9,13 @@ import (
 type mongoDBRepo struct {
 	conn            *mongo.Database
 	adminCollection string
+	faqCollection   string
 }
 
 func NewMongodbRepo(Conn *mongo.Database) domain.MongoDBRepo {
 	return &mongoDBRepo{
 		conn:            Conn,
 		adminCollection: "admins",
+		faqCollection:   "faqs",
 	}
 }

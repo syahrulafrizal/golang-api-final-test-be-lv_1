@@ -3,8 +3,10 @@ package main
 import (
 	http_admin "app/app/delivery/http/admin"
 	"app/app/delivery/http/middleware"
+	http_public "app/app/delivery/http/public"
 	mongorepo "app/app/repository/mongo"
 	usecase_admin "app/app/usecase/admin"
+	usecase_public "app/app/usecase/public"
 	"io"
 	"net/http"
 	"os"
@@ -81,6 +83,9 @@ func main() {
 	ucAdmin := usecase_admin.NewAppUsecase(usecase_admin.RepoInjection{
 		MongoDBRepo: mongorepo,
 	}, timeoutContext)
+	ucPublic := usecase_public.NewAppUsecase(usecase_public.RepoInjection{
+		MongoDBRepo: mongorepo,
+	}, timeoutContext)
 
 	// init middleware
 	mdl := middleware.NewMiddleware(redisClient)
@@ -111,6 +116,7 @@ func main() {
 
 	// init route
 	http_admin.NewRouteHandler(ginEngine.Group(""), mdl, ucAdmin)
+	http_public.NewRouteHandler(ginEngine.Group(""), mdl, ucPublic)
 
 	port := os.Getenv("PORT")
 

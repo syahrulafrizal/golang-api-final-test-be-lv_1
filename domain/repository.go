@@ -15,6 +15,11 @@ type MongoDBRepo interface {
 	FetchOneAdmin(ctx context.Context, options mongo_model.AdminFilter) (*mongo_model.Admin, error)
 	CountAdmin(ctx context.Context, options mongo_model.AdminFilter) int64
 	CreateAdmin(ctx context.Context, model *mongo_model.Admin) (err error)
+
+	FetchFaq(ctx context.Context, options mongo_model.FaqFilter) (*mongo.Cursor, error)
+	FetchOneFaq(ctx context.Context, options mongo_model.FaqFilter) (*mongo_model.Faq, error)
+	CountFaq(ctx context.Context, options mongo_model.FaqFilter) int64
+	CreateFaq(ctx context.Context, model *mongo_model.Faq) (err error)
 }
 
 type CacheRepo interface {
