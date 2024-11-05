@@ -10,6 +10,7 @@ type mongoDBRepo struct {
 	conn            *mongo.Database
 	adminCollection string
 	faqCollection   string
+	blogCollection  string
 }
 
 func NewMongodbRepo(Conn *mongo.Database) domain.MongoDBRepo {
@@ -17,5 +18,6 @@ func NewMongodbRepo(Conn *mongo.Database) domain.MongoDBRepo {
 		conn:            Conn,
 		adminCollection: "admins",
 		faqCollection:   "faqs",
+		blogCollection:  "blogs",
 	}
 }

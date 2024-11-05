@@ -20,5 +20,6 @@ func NewRouteHandler(route *gin.RouterGroup, middleware middleware.Middleware, u
 		Middleware: middleware,
 	}
 
-	handler.handleAuthRoute("/faq")
+	handler.handleFaqRoute("/faq")
+	handler.handleBlogRoute("/blog")
 }
